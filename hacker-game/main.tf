@@ -24,3 +24,32 @@ resource "aws_dynamodb_table" "users" {
     projection_type    = "ALL"
   }
 }
+
+resource "aws_iam_user" "hacker_game_service_user" {
+  name                 = "srv_hacker_game"
+}
+
+resource "aws_iam_user_policy" "srv_hacker_game_policy" {
+  depends_on = [aws_iam_user.hacker_game_service_user]
+  name       = "srv_hacker_game_policy"
+  user       = "srv_hacker_game"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": "arn:aws:dynamodb:eu-central-1:358547536439:table/users"
+        }
+    ]
+}
+EOF
+}
