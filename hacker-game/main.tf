@@ -3,6 +3,10 @@ provider "aws" {
    version = "~> 2.5"
 }
 
+terraform {
+  backend "s3" {}
+}
+
 resource "aws_dynamodb_table" "users" {
   name           = "users" 
   billing_mode   = "PAY_PER_REQUEST"
