@@ -7,41 +7,16 @@ terraform {
   backend "s3" {}
 }
 
-resource "aws_dynamodb_table" "users" {
-  name         = "users" 
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "user_id"
-
-  attribute {
-    name = "user_id"
-    type = "S"
-  }
-
-  attribute {
-    name = "username"
-    type = "S"
-  }
-
-  global_secondary_index {
-    name            = "UsernameIndex"
-    hash_key        = "username"
-    projection_type = "ALL"
-  }
-}
-
-resource "aws_dynamodb_table" "requests" {
-  name         = "requests"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key      = "request_uuid"
-  
-  attribute {
-    name = "request_uuid"
-    type = "S"
+module "dynamodb" {
+  source      = "./dynamodb"
+  core_region = var.core_region
+  providers = {
+    aws = aws
   }
 }
 
 resource "aws_iam_user" "hacker_game_service_user" {
-  name                 = "srv_hacker_game"
+  name = "srv_hacker_game"
 }
 
 resource "aws_iam_user_policy" "srv_hacker_game_policy" {
@@ -49,7 +24,7 @@ resource "aws_iam_user_policy" "srv_hacker_game_policy" {
   name       = "srv_hacker_game_policy"
   user       = "srv_hacker_game"
 
-  policy = <<EOF
+  policy     = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -61,12 +36,10 @@ resource "aws_iam_user_policy" "srv_hacker_game_policy" {
                 "dynamodb:DeleteItem",
                 "dynamodb:GetItem",
                 "dynamodb:Scan",
+                "dynamodb:Query",
                 "dynamodb:UpdateItem"
             ],
-            "Resource": [
-                "arn:aws:dynamodb:eu-central-1:358547536439:table/users",
-                "arn:aws:dynamodb:eu-central-1:358547536439:table/requests"
-            ]
+            "Resource": "arn:aws:dynamodb:eu-central-1:358547536439:table/users"
         }
     ]
 }
