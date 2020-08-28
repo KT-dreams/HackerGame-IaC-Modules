@@ -4,7 +4,11 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {}
+  backend "s3" {
+    bucket = "kt-dreams-terraform-state"
+    key    = "state"
+    region = "eu-central-1"
+  }
 }
 
 module "dynamodb" {
