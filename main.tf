@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     bucket = "kt-dreams-terraform-state"
     key    = "state"
-    region = var.core_region
+    region = "eu-central-1"
   }
 }
 
