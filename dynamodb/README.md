@@ -19,7 +19,7 @@ module "dynamodb" {
 ```
 
 ### Backend
-Module use local backend as default.
+Module uses local backend as default.
 
 ## Variables
 | Name | Description |
